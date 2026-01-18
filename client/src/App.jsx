@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import * as Cesium from "cesium";
 import * as satellite from "satellite.js";
 
-Cesium.Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_TOKEN;
+Cesium.Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_ION_TOKEN;
 
 // Helper function to generate ground track
 function generateGroundTrack(satrec, startTime, minutes, stepSeconds = 30) {
@@ -36,11 +36,16 @@ function App() {
   const [viewer, setViewer] = useState(null);
   const [satEntity, setSatEntity] = useState(null);
 
-  // Create Cesium Viewer once
+  //Create Cesium Viewer once
   useEffect(() => {
     const cesiumViewer = new Cesium.Viewer("cesiumContainer", {
       shouldAnimate: true,
       imageryProvider: false,
+      //imageryProvider: Cesium.createWorldImagery(),
+      // terrainProvider: Cesium.createWorldTerrain(),
+      // baseLayerPicker: false,
+      // animation: false,
+      // timeline: false,
     });
 
     setViewer(cesiumViewer);
@@ -50,7 +55,25 @@ function App() {
       cesiumViewer.destroy();
     };
   }, []);
+  // useEffect(() => {
+  //   const viewer = new Cesium.Viewer("cesiumContainer", {
+  //     baseLayer: Cesium.ImageryLayer.fromProviderAsync(
+  //       Cesium.createWorldImagery(),
+  //     ),
+  //     baseLayerPicker: false,
+  //     animation: false,
+  //     timeline: false,
+  //     shouldAnimate: true,
+  //   });
 
+  //   setViewer(viewer);
+
+  //   return () => {
+  //     if (intervalId) clearInterval(intervalId);
+  //     cesiumViewer.destroy();
+  //   };
+  // }, []);
+  console.log("TOKEN:", Cesium.Ion.defaultAccessToken);
   const startTracking = () => {
     if (!viewer) {
       alert("Cesium Viewer not ready");
@@ -130,22 +153,24 @@ function App() {
     <>
       {/* INPUT PANEL */}
       <div className="container">
-        <label>Enter TLE Line 1:</label>
+        <label htmlFor="tle1">Enter TLE Line 1:</label>
         <br />
         <textarea
           value={tle1}
           onChange={(e) => setTle1(e.target.value)}
           rows={2}
           cols={70}
+          id="tle1"
         />
         <br />
         <br />
-        <label>Enter TLE Line 2:</label>
+        <label htmlFor="tle2">Enter TLE Line 2:</label>
         <br />
         <textarea
           value={tle2}
           onChange={(e) => setTle2(e.target.value)}
           rows={2}
+          id="tle2"
           cols={70}
         />
         <br />
